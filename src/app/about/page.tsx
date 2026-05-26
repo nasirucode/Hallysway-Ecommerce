@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Story } from "@/components/home/Story";
 import { Testimonials } from "@/components/home/Testimonials";
 import { ShopHeader } from "@/components/shop/ShopHeader";
+import { AirportVisit } from "@/components/home/AirportVisit";
 
 export const metadata = {
   title: "Our Story",
@@ -30,10 +31,12 @@ export default function AboutPage() {
   return (
     <>
       <ShopHeader
-        title="Crafting joyful rituals, the Hally's Way."
+        title="Crafting joyful moments, the Hally's Way."
         description="Born in Maiduguri, made for the world — Hally's Way Concept is a wellness, catering and lifestyle brand committed to natural ingredients and warm hospitality."
       />
       <Story />
+
+      <AirportVisit />
 
       <section id="catering" className="container py-20">
         <div className="grid gap-6 md:grid-cols-3">

@@ -78,7 +78,7 @@ export const seedProducts: Product[] = [
     slug: "ginger-wellness-tea",
     shortDescription: "Warming ginger to support immunity and digestion.",
     description:
-      "Sun-dried ginger root with cardamom and cinnamon — a warming wellness ritual to start the day.",
+      "Sun-dried ginger root with cardamom and cinnamon — a warming wellness blend to start the day.",
     price: 4200,
     currency: "NGN",
     images: ["/products/ginger-tea.jpg", "/products/honey-ginger.jpg"],

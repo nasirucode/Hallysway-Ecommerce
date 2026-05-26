@@ -26,7 +26,7 @@ export default function AddressesPage() {
             <br />
             Maiduguri, Borno State
             <br />
-            Nigeria · 0907 403 3923
+            Nigeria · +234 906 827 5902
           </p>
         </div>
         <div className="grid place-items-center rounded-3xl border border-dashed border-brand-navy/20 p-6">

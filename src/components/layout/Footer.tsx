@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Facebook, Instagram, Mail, MapPin, Phone, Twitter } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
+import { SITE, formatLocation } from "@/lib/site";
 
 const COLUMNS = [
   {
@@ -63,13 +64,16 @@ export function Footer() {
             </p>
             <div className="mt-6 space-y-2.5 text-sm text-white/80">
               <p className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-brand-red" /> 0907 403 3923
+                <Phone className="h-4 w-4 text-brand-red" />
+                <a href={`tel:${SITE.phoneTel}`} className="link-underline">
+                  {SITE.phone}
+                </a>
               </p>
               <p className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-brand-red" /> hello@hallysway.com
-              </p>
-              <p className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-brand-red" /> Maiduguri, Borno State
+                <Mail className="h-4 w-4 text-brand-red" />
+                <a href={`mailto:${SITE.email}`} className="link-underline">
+                  {SITE.email}
+                </a>
               </p>
             </div>
             <div className="mt-6 flex items-center gap-2">
@@ -98,6 +102,18 @@ export function Footer() {
                   </li>
                 ))}
               </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 grid gap-5 border-t border-white/10 pt-10 sm:grid-cols-2 lg:grid-cols-4">
+          {SITE.locations.map((loc) => (
+            <div key={loc.label} className="text-sm text-white/75">
+              <div className="flex items-center gap-2 text-white">
+                <MapPin className="h-4 w-4 text-brand-red" />
+                <span className="font-medium">{loc.label}</span>
+              </div>
+              <p className="mt-2 leading-relaxed">{formatLocation(loc)}</p>
             </div>
           ))}
         </div>

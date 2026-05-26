@@ -13,7 +13,7 @@ export function Categories({ categories }: { categories: Category[] }) {
       <SectionHeader
         eyebrow="Shop by category"
         title="A pantry of natural goodness"
-        description="From slow-steeped herbal infusions to fiery Tanji and ready-to-serve catering packs — find your ritual."
+        description="From slow-steeped herbal infusions to fiery Tanji and ready-to-serve catering packs — find your favourite."
       />
       <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {categories.map((c, i) => (

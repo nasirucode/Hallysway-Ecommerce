@@ -76,7 +76,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="mt-6 max-w-xl text-lg text-brand-navy/70"
           >
-            Discover Hally&apos;s Way signature tea blends, fiery Tanji spice and wellness rituals — crafted in small batches and delivered to your door.
+            Discover Hally&apos;s Way signature tea blends, fiery Tanji spice and wellness essentials — crafted in small batches and delivered to your door.
           </motion.p>
 
           <motion.div

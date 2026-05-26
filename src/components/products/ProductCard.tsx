@@ -91,8 +91,12 @@ export function ProductCard({ product, index = 0 }: Props) {
           <div className="flex items-center gap-1 text-xs text-brand-navy/60">
             <Star className="h-3.5 w-3.5 fill-brand-gold text-brand-gold" />
             <span>{product.rating?.toFixed(1) ?? "4.8"}</span>
-            <span aria-hidden>·</span>
-            <span>{product.category}</span>
+            {product.category && (
+              <>
+                <span aria-hidden>·</span>
+                <span className="truncate">{product.category}</span>
+              </>
+            )}
           </div>
           <h3 className="mt-1 font-display text-lg text-brand-navy group-hover:text-brand-red transition-colors">
             {product.name}

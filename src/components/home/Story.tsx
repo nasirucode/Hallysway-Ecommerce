@@ -86,7 +86,7 @@ export function Story() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="mt-4 max-w-xl text-brand-navy/70 text-lg"
           >
-            Hally&apos;s Way Concept was born from a love for natural ingredients, generous hospitality and the rituals that make every day a little more soulful. From hand-mixed tea blends to fiery Tanji and full catering services — we&apos;re honouring tradition with a modern touch.
+            Hally&apos;s Way Concept was born from a love for natural ingredients, generous hospitality and the traditions that make every day a little more soulful. From hand-mixed tea blends to fiery Tanji and full catering services — we&apos;re honouring tradition with a modern touch.
           </motion.p>
 
           <div className="mt-10 grid gap-5">

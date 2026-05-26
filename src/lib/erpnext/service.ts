@@ -281,6 +281,115 @@ export async function findOrCreateCustomer(args: {
   return created?.data ?? null;
 }
 
+// -- Customer addresses --------------------------------------------------
+
+interface AddressInput {
+  customerName: string;
+  customerLabel: string;
+  email: string;
+  phone: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  country?: string;
+  postalCode?: string;
+  addressType?: "Shipping" | "Billing";
+}
+
+/**
+ * Find addresses already linked to a Customer via the Dynamic Link child
+ * table that ERPNext uses to relate Address → Customer.
+ */
+async function findAddressesForCustomer(customerName: string): Promise<string[]> {
+  const links = await erpResource.list<{ parent: string }>("Dynamic Link", {
+    query: {
+      fields: JSON.stringify(["parent"]),
+      filters: JSON.stringify([
+        ["parenttype", "=", "Address"],
+        ["link_doctype", "=", "Customer"],
+        ["link_name", "=", customerName]
+      ]),
+      limit_page_length: 200
+    },
+    soft: true
+  });
+  return (links?.data || []).map((l) => l.parent).filter(Boolean);
+}
+
+/**
+ * Create or update an ERPNext Address record linked to the given Customer.
+ * Looks up addresses already attached to the customer; if one matches the
+ * incoming line1+city it's updated in place, otherwise a brand new Address
+ * is created with the customer link.
+ */
+export async function upsertCustomerAddress(
+  input: AddressInput
+): Promise<{ name: string } | null> {
+  if (!isErpConfigured()) return null;
+
+  const addressType = input.addressType || "Shipping";
+  const title = `${input.customerLabel} - ${addressType}`;
+
+  let existingName: string | null = null;
+  const linkedAddressNames = await findAddressesForCustomer(input.customerName);
+  if (linkedAddressNames.length) {
+    const linked = await erpResource.list<{
+      name: string;
+      address_line1?: string;
+      city?: string;
+    }>("Address", {
+      query: {
+        fields: JSON.stringify(["name", "address_line1", "city"]),
+        filters: JSON.stringify([["name", "in", linkedAddressNames]]),
+        limit_page_length: 200
+      },
+      soft: true
+    });
+
+    const match = (linked?.data || []).find(
+      (a) =>
+        (a.address_line1 || "").trim().toLowerCase() === input.line1.trim().toLowerCase() &&
+        (a.city || "").trim().toLowerCase() === input.city.trim().toLowerCase()
+    );
+    existingName = match?.name ?? null;
+  }
+
+  const body: Record<string, any> = {
+    address_title: title,
+    address_type: addressType,
+    address_line1: input.line1,
+    address_line2: input.line2 || undefined,
+    city: input.city,
+    state: input.state,
+    country: input.country || "Nigeria",
+    pincode: input.postalCode || undefined,
+    phone: input.phone || undefined,
+    email_id: input.email || undefined,
+    is_primary_address: 1,
+    is_shipping_address: addressType === "Shipping" ? 1 : 0,
+    links: [{ link_doctype: "Customer", link_name: input.customerName }]
+  };
+
+  try {
+    if (existingName) {
+      const updated = await erpResource.update<{ name: string }>("Address", existingName, body);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[erp] address updated: ${existingName} → customer ${input.customerName}`);
+      }
+      return updated?.data ?? { name: existingName };
+    }
+    const created = await erpResource.create<{ name: string }>("Address", body);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[erp] address created: ${created?.data?.name} → customer ${input.customerName}`);
+    }
+    return created?.data ?? null;
+  } catch (err) {
+    console.warn(`[erp] address upsert failed for ${input.customerName}:`, (err as Error).message);
+    return null;
+  }
+}
+
 // -- Sales Orders / Invoices --------------------------------------------
 
 export async function createSalesOrder(payload: CheckoutPayload) {
@@ -296,7 +405,20 @@ export async function createSalesOrder(payload: CheckoutPayload) {
     };
   }
 
-  const body = {
+  const shippingAddress = await upsertCustomerAddress({
+    customerName: customer.name,
+    customerLabel: payload.customer.name,
+    email: payload.customer.email,
+    phone: payload.customer.phone,
+    line1: payload.shipping.line1,
+    city: payload.shipping.city,
+    state: payload.shipping.state,
+    country: payload.shipping.country,
+    postalCode: payload.shipping.postalCode,
+    addressType: "Shipping"
+  });
+
+  const body: Record<string, any> = {
     customer: customer.name,
     delivery_date: new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0],
     items: payload.items.map((it) => ({
@@ -304,21 +426,28 @@ export async function createSalesOrder(payload: CheckoutPayload) {
       qty: it.quantity,
       rate: it.rate
     })),
-    customer_address: undefined,
-    shipping_address_name: undefined,
-    company_address: undefined,
     customer_name: payload.customer.name,
-    address_display: `${payload.shipping.line1}, ${payload.shipping.city}, ${payload.shipping.state}`,
     contact_email: payload.customer.email,
     contact_mobile: payload.customer.phone,
     remarks: payload.notes || ""
   };
 
+  if (shippingAddress?.name) {
+    body.customer_address = shippingAddress.name;
+    body.shipping_address_name = shippingAddress.name;
+  } else {
+    body.address_display = `${payload.shipping.line1}, ${payload.shipping.city}, ${payload.shipping.state}`;
+  }
+
   const order = await erpResource.create<any>("Sales Order", body);
   return order?.data;
 }
 
-export async function createSalesInvoice(args: { customerEmail: string; salesOrderName?: string; payload?: CheckoutPayload }) {
+export async function createSalesInvoice(args: {
+  customerEmail: string;
+  salesOrderName?: string;
+  payload?: CheckoutPayload;
+}) {
   if (!args.payload) throw new Error("payload required for invoice");
 
   const customer = await findOrCreateCustomer(args.payload.customer);
@@ -336,7 +465,20 @@ export async function createSalesInvoice(args: { customerEmail: string; salesOrd
     };
   }
 
-  const body = {
+  const shippingAddress = await upsertCustomerAddress({
+    customerName: customer.name,
+    customerLabel: args.payload.customer.name,
+    email: args.payload.customer.email,
+    phone: args.payload.customer.phone,
+    line1: args.payload.shipping.line1,
+    city: args.payload.shipping.city,
+    state: args.payload.shipping.state,
+    country: args.payload.shipping.country,
+    postalCode: args.payload.shipping.postalCode,
+    addressType: "Shipping"
+  });
+
+  const body: Record<string, any> = {
     customer: customer.name,
     posting_date: new Date().toISOString().split("T")[0],
     due_date: new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0],
@@ -346,8 +488,17 @@ export async function createSalesInvoice(args: { customerEmail: string; salesOrd
       rate: it.rate
     })),
     update_stock: 1,
+    contact_email: args.payload.customer.email,
+    contact_mobile: args.payload.customer.phone,
     remarks: args.payload.notes || ""
   };
+
+  if (shippingAddress?.name) {
+    body.customer_address = shippingAddress.name;
+    body.shipping_address_name = shippingAddress.name;
+  } else {
+    body.address_display = `${args.payload.shipping.line1}, ${args.payload.shipping.city}, ${args.payload.shipping.state}`;
+  }
 
   const invoice = await erpResource.create<any>("Sales Invoice", body);
   return invoice?.data;

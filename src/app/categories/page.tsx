@@ -10,7 +10,7 @@ export default async function CategoriesPage() {
     <>
       <ShopHeader
         title="Explore our categories"
-        description="From signature blends to wellness rituals and fiery Tanji — find your favourite corner of the Hally's Way pantry."
+        description="From signature blends to wellness essentials and fiery Tanji — find your favourite corner of the Hally's Way pantry."
         count={categories.length}
       />
       <Categories categories={categories} />

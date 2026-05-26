@@ -126,7 +126,7 @@ export default function CheckoutPage() {
               <input
                 required
                 name="phone"
-                placeholder="Mobile (e.g. 0907 403 3923)"
+                placeholder="Mobile (e.g. +234 906 827 5902)"
                 className="input sm:col-span-2"
               />
             </div>

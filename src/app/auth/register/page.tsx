@@ -109,7 +109,7 @@ export default function RegisterPage() {
           <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
             <span className="eyebrow text-white/80">Join Hally&apos;s Way</span>
             <h2 className="mt-3 font-display text-4xl leading-tight text-balance">
-              Brew rituals delivered to your door.
+              Brew moments delivered to your door.
             </h2>
             <p className="mt-3 text-white/85">
               10% off your first order + early access to seasonal blends.

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Logo } from "@/components/brand/Logo";
 import { useCart } from "@/store/cart";
 import { cn } from "@/lib/utils";
+import { SITE } from "@/lib/site";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -56,7 +57,9 @@ export function Navbar({ user }: NavbarProps) {
           </p>
           <p className="sm:hidden tracking-wide opacity-90">Free delivery on orders ₦15k+</p>
           <div className="hidden md:flex items-center gap-4 opacity-90">
-            <span>Call: 0907 403 3923</span>
+            <a href={`tel:${SITE.phoneTel}`} className="link-underline">
+              Call: {SITE.phone}
+            </a>
             <span aria-hidden>·</span>
             {user ? (
               <>
@@ -221,7 +224,9 @@ export function Navbar({ user }: NavbarProps) {
                     </Link>
                   </>
                 )}
-                <p>Call: 0907 403 3923</p>
+                <a href={`tel:${SITE.phoneTel}`} className="link-underline w-fit">
+                  Call: {SITE.phone}
+                </a>
               </div>
             </motion.aside>
           </motion.div>
