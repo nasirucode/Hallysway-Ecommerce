@@ -20,7 +20,9 @@ const COLUMNS = [
     title: "Company",
     links: [
       { label: "Our Story", href: "/about" },
-      { label: "Catering", href: "/about#catering" },
+      { label: "Our Services", href: "/services" },
+      { label: "Hally's Way School", href: "/services#school" },
+      { label: "Course Catalog", href: "/services#courses" },
       { label: "Wholesale", href: "/contact" },
       { label: "Contact", href: "/contact" }
     ]

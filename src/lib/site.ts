@@ -21,21 +21,14 @@ export const SITE = {
     {
       label: "Airport Arrival",
       address: "Building 02, opp Arrival",
-      city: "Muhammadu Buhari International Airport, Maiduguri",
+      city: "General Muhammadu Buhari International Airport, Maiduguri",
       state: "Borno State",
       country: "Nigeria"
     },
     {
       label: "Airport Departure",
       address: "Shop 05, Departure Hall",
-      city: "Muhammadu Buhari International Airport, Maiduguri",
-      state: "Borno State",
-      country: "Nigeria"
-    },
-    {
-      label: "Airport General",
-      address: "General, at the back of the airport",
-      city: "Muhammadu Buhari International Airport, Maiduguri",
+      city: "General Muhammadu Buhari International Airport, Maiduguri",
       state: "Borno State",
       country: "Nigeria"
     },
