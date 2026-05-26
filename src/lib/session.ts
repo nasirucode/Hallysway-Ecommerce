@@ -13,6 +13,8 @@ export interface SessionUser {
   email: string;
   name: string;
   phone?: string;
+  erpUser?: string;
+  customerId?: string;
 }
 
 function sign(value: string) {

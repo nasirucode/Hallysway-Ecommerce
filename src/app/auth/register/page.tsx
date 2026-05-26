@@ -15,19 +15,30 @@ export default function RegisterPage() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    const password = String(form.get("password"));
+    const confirmPassword = String(form.get("confirmPassword"));
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: String(form.get("email")),
           name: String(form.get("name")),
-          phone: String(form.get("phone"))
+          email: String(form.get("email")),
+          phone: String(form.get("phone")),
+          password,
+          confirmPassword
         })
       });
-      if (!res.ok) throw new Error("Could not create your account");
-      toast.success("Account created!");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not create your account");
+      toast.success("Account created! Welcome to Hally's Way.");
       router.push("/dashboard");
       router.refresh();
     } catch (err: any) {
@@ -55,9 +66,27 @@ export default function RegisterPage() {
           </p>
 
           <form onSubmit={onSubmit} className="mt-8 grid gap-3">
-            <input required name="name" placeholder="Full name" className="input" />
-            <input required type="email" name="email" placeholder="Email address" className="input" />
-            <input required name="phone" placeholder="Mobile number" className="input" />
+            <input required name="name" placeholder="Full name" className="input" autoComplete="name" />
+            <input required type="email" name="email" placeholder="Email address" className="input" autoComplete="email" />
+            <input required name="phone" placeholder="Mobile number" className="input" autoComplete="tel" />
+            <input
+              required
+              type="password"
+              name="password"
+              placeholder="Password (min. 8 characters)"
+              className="input"
+              autoComplete="new-password"
+              minLength={8}
+            />
+            <input
+              required
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              className="input"
+              autoComplete="new-password"
+              minLength={8}
+            />
             <button type="submit" disabled={loading} className="btn-primary mt-2 py-3.5 disabled:opacity-60">
               {loading ? "Creating..." : "Create account"}
               <ArrowRight className="h-4 w-4" />
@@ -65,7 +94,7 @@ export default function RegisterPage() {
           </form>
 
           <p className="mt-6 text-xs text-brand-navy/50">
-            By continuing you agree to our terms and privacy policy.
+            We&apos;ll create your Customer and User records in ERPNext so you can sign in and track orders.
           </p>
         </motion.div>
 

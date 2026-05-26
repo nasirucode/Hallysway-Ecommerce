@@ -22,11 +22,11 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: String(form.get("email")),
-          name: String(form.get("name") || form.get("email")),
-          phone: String(form.get("phone") || "")
+          password: String(form.get("password"))
         })
       });
-      if (!res.ok) throw new Error("Could not sign in");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not sign in");
       toast.success("Welcome back!");
       router.push("/dashboard");
       router.refresh();
@@ -80,9 +80,16 @@ export default function LoginPage() {
           </p>
 
           <form onSubmit={onSubmit} className="mt-8 grid gap-3">
-            <input required type="email" name="email" placeholder="Email address" className="input" />
-            <input name="name" placeholder="Full name (optional)" className="input" />
-            <input name="phone" placeholder="Phone (optional)" className="input" />
+            <input required type="email" name="email" placeholder="Email address" className="input" autoComplete="email" />
+            <input
+              required
+              type="password"
+              name="password"
+              placeholder="Password"
+              className="input"
+              autoComplete="current-password"
+              minLength={8}
+            />
             <button type="submit" disabled={loading} className="btn-primary mt-2 py-3.5 disabled:opacity-60">
               {loading ? "Signing in..." : "Sign in"}
               <ArrowRight className="h-4 w-4" />
@@ -90,7 +97,7 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-6 text-xs text-brand-navy/50">
-            For demo we use email-only sign-in linked to your ERPNext customer record.
+            Your account is secured with your ERPNext login credentials.
           </p>
         </motion.div>
       </div>

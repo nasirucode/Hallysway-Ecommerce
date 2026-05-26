@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Receipt, ShoppingBag, Sparkles, Wallet } from "lucide-react";
 import { listInvoicesForEmail, listOrdersForEmail } from "@/lib/erpnext/service";
 import { getSession } from "@/lib/session";
-import { StatCard } from "@/components/dashboard/StatCard";
+import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { formatCurrency } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -29,12 +28,12 @@ export default async function DashboardPage() {
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Orders placed" value={orders.length} icon={ShoppingBag} accent="navy" delay={0} />
-        <StatCard label="Invoices" value={invoices.length} icon={Receipt} accent="red" delay={0.05} />
-        <StatCard label="Lifetime spend" value={formatCurrency(totalSpent)} icon={Wallet} accent="tea" delay={0.1} />
-        <StatCard label="Outstanding" value={formatCurrency(outstanding)} icon={Sparkles} accent="gold" delay={0.15} />
-      </div>
+      <DashboardStats
+        ordersCount={orders.length}
+        invoicesCount={invoices.length}
+        totalSpent={formatCurrency(totalSpent)}
+        outstanding={formatCurrency(outstanding)}
+      />
 
       <section className="rounded-3xl bg-white p-6 shadow-soft">
         <div className="flex items-center justify-between">
