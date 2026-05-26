@@ -104,7 +104,17 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-start justify-between gap-6 border-t border-white/10 pt-6 text-xs text-white/60 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} Hally&apos;s Way Concept. All rights reserved.</p>
-          <p>Powered by ERPNext · Built with Next.js</p>
+          <p>
+            Powered by{" "}
+            <a
+              href="https://console.ng"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline font-medium text-white/90 hover:text-brand-red transition"
+            >
+              Console Technologies
+            </a>
+          </p>
         </div>
       </div>
     </footer>

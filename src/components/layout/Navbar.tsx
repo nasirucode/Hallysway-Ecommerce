@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
-import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { Heart, LogOut, Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import toast from "react-hot-toast";
 import { Logo } from "@/components/brand/Logo";
 import { useCart } from "@/store/cart";
 import { cn } from "@/lib/utils";
@@ -17,14 +18,29 @@ const NAV = [
   { href: "/contact", label: "Contact" }
 ];
 
-export function Navbar() {
+interface NavbarProps {
+  user?: { name: string; email: string } | null;
+}
+
+export function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const cart = useCart();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 30));
+
+  const firstName = user?.name?.split(" ")[0];
+
+  const handleSignOut = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    toast.success("Signed out");
+    setOpen(false);
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <>
@@ -42,9 +58,21 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-4 opacity-90">
             <span>Call: 0907 403 3923</span>
             <span aria-hidden>·</span>
-            <Link href="/auth/login" className="link-underline">
-              Sign in
-            </Link>
+            {user ? (
+              <>
+                <Link href="/dashboard" className="link-underline">
+                  Hi, {firstName}
+                </Link>
+                <span aria-hidden>·</span>
+                <button onClick={handleSignOut} className="link-underline">
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link href="/auth/login" className="link-underline">
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </motion.div>
@@ -171,12 +199,28 @@ export function Navbar() {
                 ))}
               </nav>
               <div className="mt-10 grid gap-3 text-sm text-brand-navy/70">
-                <Link href="/auth/login" className="link-underline w-fit">
-                  Sign in
-                </Link>
-                <Link href="/dashboard" className="link-underline w-fit">
-                  My dashboard
-                </Link>
+                {user ? (
+                  <>
+                    <p className="text-brand-navy">
+                      Signed in as <span className="font-medium">{firstName}</span>
+                    </p>
+                    <Link href="/dashboard" onClick={() => setOpen(false)} className="link-underline w-fit">
+                      My dashboard
+                    </Link>
+                    <button onClick={handleSignOut} className="link-underline w-fit text-brand-red flex items-center gap-1.5">
+                      <LogOut className="h-3.5 w-3.5" /> Sign out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/login" onClick={() => setOpen(false)} className="link-underline w-fit">
+                      Sign in
+                    </Link>
+                    <Link href="/auth/register" onClick={() => setOpen(false)} className="link-underline w-fit">
+                      Create account
+                    </Link>
+                  </>
+                )}
                 <p>Call: 0907 403 3923</p>
               </div>
             </motion.aside>

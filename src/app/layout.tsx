@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { Toaster } from "react-hot-toast";
+import { getSession } from "@/lib/session";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const playfair = Playfair_Display({
@@ -13,6 +14,8 @@ const playfair = Playfair_Display({
   variable: "--font-display",
   display: "swap"
 });
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -30,11 +33,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = getSession();
+  const user = session ? { name: session.name, email: session.email } : null;
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-brand-cream text-brand-navy antialiased selection:bg-brand-navy selection:text-white">
         <Providers>
-          <Navbar />
+          <Navbar user={user} />
           <main className="relative">{children}</main>
           <Footer />
           <CartDrawer />
