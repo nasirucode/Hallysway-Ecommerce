@@ -33,6 +33,13 @@ export const SITE = {
       country: "Nigeria"
     },
     {
+      label: "Airport General",
+      address: "General, at the back of the airport",
+      city: "Muhammadu Buhari International Airport, Maiduguri",
+      state: "Borno State",
+      country: "Nigeria"
+    },
+    {
       label: "New Bama Motor Park",
       address: "Shop J17, New Bama Motor Park",
       city: "Maiduguri",
