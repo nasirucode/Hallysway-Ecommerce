@@ -101,7 +101,7 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
         icon: Gem
       },
       {
-        title: "Herma (Hair Accessories)",
+        title: "Henna (Hair Accessories)",
         description:
           "Original hair accessories that complete your signature look.",
         icon: Wand2
@@ -268,7 +268,7 @@ export const SCHOOL_COURSES: SchoolCourse[] = [
     description: "Design and assemble jewellery and accessories using local beads."
   },
   {
-    title: "Hair Accessories (Herma) Crafting",
+    title: "Hair Accessories (Henna) Crafting",
     category: "Fashion & Beauty",
     duration: "3 weeks",
     description: "Create signature hair accessories ready for retail."
